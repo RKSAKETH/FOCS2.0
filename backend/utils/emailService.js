@@ -13,7 +13,7 @@ class EmailService {
     const port = parseInt(process.env.EMAIL_PORT) || 587;
     const isSecure = port === 465; // true for port 465, false for 587
 
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
       host: process.env.EMAIL_HOST || 'smtp.gmail.com',
       port: port,
       secure: isSecure, // true for 465, false for other ports
