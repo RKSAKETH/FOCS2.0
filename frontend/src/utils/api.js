@@ -27,7 +27,10 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
+        // Don't redirect if we're verifying OTP - let component handle it with error message
+        const isOTPVerification = error.config?.url?.includes('/auth/verify-otp');
+
+        if (error.response?.status === 401 && !isOTPVerification) {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             window.location.href = '/login';

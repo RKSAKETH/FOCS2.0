@@ -72,7 +72,8 @@ class EmailService {
       }
     };
 
-    const config = purposes[purpose] || purposes.verification;
+    // Default to 'finalize' if purpose not recognized
+    const config = purposes[purpose] || purposes.finalize;
 
     const mailOptions = {
       from: `"Toxicology Portal" <${process.env.EMAIL_USER}>`,

@@ -45,4 +45,11 @@ router.get(
     reportController.getEncodingInfo
 );
 
+// Delete report - Directors only
+router.delete(
+    '/:id',
+    requireRole('director'),
+    reportController.deleteReport
+);
+
 module.exports = router;

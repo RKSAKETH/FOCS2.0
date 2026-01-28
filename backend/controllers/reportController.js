@@ -378,6 +378,54 @@ exports.verifyReport = async (req, res) => {
 };
 
 /**
+ * Delete report
+ * Only Directors can delete reports
+ */
+exports.deleteReport = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const report = await Report.findById(id);
+        if (!report) {
+            return res.status(404).json({
+                success: false,
+                message: 'Report not found'
+            });
+        }
+
+        // Store case ID for audit log before deletion
+        const caseId = report.caseId;
+        const status = report.status;
+
+        // Delete the report
+        await Report.findByIdAndDelete(id);
+
+        // Log action
+        await AuditLog.create({
+            action: 'delete',
+            resource: status === 'finalized' ? 'final_report' : 'draft_results',
+            userId: req.userId,
+            userRole: req.userRole,
+            resourceId: id,
+            details: `Deleted report ${caseId} (status: ${status})`,
+            ipAddress: req.ip
+        });
+
+        res.json({
+            success: true,
+            message: `Report ${caseId} deleted successfully`
+        });
+    } catch (error) {
+        console.error('Delete report error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to delete report',
+            error: error.message
+        });
+    }
+};
+
+/**
  * Component 5: Get encoding security info
  */
 exports.getEncodingInfo = async (req, res) => {

@@ -120,11 +120,11 @@ export default function Dashboard() {
                 <div className="card mb-8">
                     <h2 className="text-2xl font-bold mb-6 flex items-center">
                         <FaUserShield className="mr-3 text-purple-400" />
-                        Access Control Matrix (Component 2)
+                        {user.role === 'director' ? 'Access Control Matrix (Component 2)' : 'Your Access Permissions'}
                     </h2>
 
                     {/* Your Permissions */}
-                    <div className="mb-8">
+                    <div className={user.role === 'director' ? 'mb-8' : ''}>
                         <h3 className="text-xl font-semibold mb-4">Your Permissions ({user.role.toUpperCase()})</h3>
                         <div className="space-y-3">
                             {getRolePermissions().map((permission, index) => (
@@ -136,95 +136,99 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    {/* Full Access Control Matrix Table */}
-                    <div className="overflow-x-auto">
-                        <h3 className="text-xl font-semibold mb-4">Complete Access Control Matrix</h3>
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr className="border-b border-white/20">
-                                    <th className="text-left p-3 font-semibold text-purple-400">Role / Resource</th>
-                                    <th className="text-center p-3 font-semibold text-blue-400">Draft Results</th>
-                                    <th className="text-center p-3 font-semibold text-green-400">Final Reports</th>
-                                    <th className="text-center p-3 font-semibold text-yellow-400">Audit Logs</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {/* Technician Row */}
-                                <tr className="border-b border-white/10 hover:bg-white/5">
-                                    <td className="p-3 font-semibold">
-                                        <span className={`badge ${user.role === 'technician' ? 'badge-info' : 'bg-gray-700 text-gray-300'}`}>
-                                            👨‍🔬 Technician
-                                        </span>
-                                    </td>
-                                    <td className="text-center p-3">
-                                        <div className="text-green-400 font-semibold">✓ Create, Read, Update</div>
-                                        <div className="text-xs text-gray-500">Full access to drafts</div>
-                                    </td>
-                                    <td className="text-center p-3">
-                                        <div className="text-blue-400 font-semibold">✓ Read Only</div>
-                                        <div className="text-xs text-gray-500">View finalized reports</div>
-                                    </td>
-                                    <td className="text-center p-3">
-                                        <div className="text-red-400 font-semibold">✗ No Access</div>
-                                        <div className="text-xs text-gray-500">Cannot view logs</div>
-                                    </td>
-                                </tr>
+                    {/* Full Access Control Matrix Table - DIRECTOR ONLY */}
+                    {user.role === 'director' && (
+                        <>
+                            <div className="overflow-x-auto">
+                                <h3 className="text-xl font-semibold mb-4">Complete Access Control Matrix</h3>
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="border-b border-white/20">
+                                            <th className="text-left p-3 font-semibold text-purple-400">Role / Resource</th>
+                                            <th className="text-center p-3 font-semibold text-blue-400">Draft Results</th>
+                                            <th className="text-center p-3 font-semibold text-green-400">Final Reports</th>
+                                            <th className="text-center p-3 font-semibold text-yellow-400">Audit Logs</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {/* Technician Row */}
+                                        <tr className="border-b border-white/10 hover:bg-white/5">
+                                            <td className="p-3 font-semibold">
+                                                <span className="badge bg-gray-700 text-gray-300">
+                                                    👨‍🔬 Technician
+                                                </span>
+                                            </td>
+                                            <td className="text-center p-3">
+                                                <div className="text-green-400 font-semibold">✓ Create, Read, Update</div>
+                                                <div className="text-xs text-gray-500">Full access to drafts</div>
+                                            </td>
+                                            <td className="text-center p-3">
+                                                <div className="text-blue-400 font-semibold">✓ Read Only</div>
+                                                <div className="text-xs text-gray-500">View finalized reports</div>
+                                            </td>
+                                            <td className="text-center p-3">
+                                                <div className="text-red-400 font-semibold">✗ No Access</div>
+                                                <div className="text-xs text-gray-500">Cannot view logs</div>
+                                            </td>
+                                        </tr>
 
-                                {/* Director Row */}
-                                <tr className="border-b border-white/10 hover:bg-white/5">
-                                    <td className="p-3 font-semibold">
-                                        <span className={`badge ${user.role === 'director' ? 'badge-warning' : 'bg-gray-700 text-gray-300'}`}>
-                                            👨‍💼 Director
-                                        </span>
-                                    </td>
-                                    <td className="text-center p-3">
-                                        <div className="text-green-400 font-semibold">✓ Full Access</div>
-                                        <div className="text-xs text-gray-500">Create, Read, Update, Delete</div>
-                                    </td>
-                                    <td className="text-center p-3">
-                                        <div className="text-green-400 font-semibold">✓ Approve & Sign</div>
-                                        <div className="text-xs text-gray-500">Finalize with digital signature</div>
-                                    </td>
-                                    <td className="text-center p-3">
-                                        <div className="text-green-400 font-semibold">✓ Read Only</div>
-                                        <div className="text-xs text-gray-500">View all audit logs</div>
-                                    </td>
-                                </tr>
+                                        {/* Director Row */}
+                                        <tr className="border-b border-white/10 hover:bg-white/5">
+                                            <td className="p-3 font-semibold">
+                                                <span className="badge badge-warning">
+                                                    👨‍💼 Director
+                                                </span>
+                                            </td>
+                                            <td className="text-center p-3">
+                                                <div className="text-green-400 font-semibold">✓ Full Access</div>
+                                                <div className="text-xs text-gray-500">Create, Read, Update, Delete</div>
+                                            </td>
+                                            <td className="text-center p-3">
+                                                <div className="text-green-400 font-semibold">✓ Approve & Sign</div>
+                                                <div className="text-xs text-gray-500">Finalize with digital signature</div>
+                                            </td>
+                                            <td className="text-center p-3">
+                                                <div className="text-green-400 font-semibold">✓ Read Only</div>
+                                                <div className="text-xs text-gray-500">View all audit logs</div>
+                                            </td>
+                                        </tr>
 
-                                {/* Police Row */}
-                                <tr className="hover:bg-white/5">
-                                    <td className="p-3 font-semibold">
-                                        <span className={`badge ${user.role === 'police' ? 'badge-success' : 'bg-gray-700 text-gray-300'}`}>
-                                            👮 Police/DA
-                                        </span>
-                                    </td>
-                                    <td className="text-center p-3">
-                                        <div className="text-red-400 font-semibold">✗ No Access</div>
-                                        <div className="text-xs text-gray-500">Cannot view drafts</div>
-                                    </td>
-                                    <td className="text-center p-3">
-                                        <div className="text-blue-400 font-semibold">✓ Read Only</div>
-                                        <div className="text-xs text-gray-500">View finalized reports</div>
-                                    </td>
-                                    <td className="text-center p-3">
-                                        <div className="text-red-400 font-semibold">✗ No Access</div>
-                                        <div className="text-xs text-gray-500">Cannot view logs</div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                        {/* Police Row */}
+                                        <tr className="hover:bg-white/5">
+                                            <td className="p-3 font-semibold">
+                                                <span className="badge bg-gray-700 text-gray-300">
+                                                    👮 Police/DA
+                                                </span>
+                                            </td>
+                                            <td className="text-center p-3">
+                                                <div className="text-red-400 font-semibold">✗ No Access</div>
+                                                <div className="text-xs text-gray-500">Cannot view drafts</div>
+                                            </td>
+                                            <td className="text-center p-3">
+                                                <div className="text-blue-400 font-semibold">✓ Read Only</div>
+                                                <div className="text-xs text-gray-500">View finalized reports</div>
+                                            </td>
+                                            <td className="text-center p-3">
+                                                <div className="text-red-400 font-semibold">✗ No Access</div>
+                                                <div className="text-xs text-gray-500">Cannot view logs</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
 
-                    {/* Policy Justification */}
-                    <div className="mt-6 p-4 bg-purple-900/20 border border-purple-500/30 rounded-lg">
-                        <h4 className="font-semibold text-purple-400 mb-2">🔒 Policy Justification</h4>
-                        <ul className="text-sm text-gray-300 space-y-1">
-                            <li>• <strong>Technicians</strong>: Create/modify drafts, no access to finalization (separation of duties)</li>
-                            <li>• <strong>Directors</strong>: Full oversight, approve reports with digital signatures (accountability)</li>
-                            <li>• <strong>Police/DA</strong>: Read-only access to finalized reports (chain of custody, no tampering)</li>
-                            <li>• <strong>Audit Logs</strong>: Director-only for security oversight and compliance</li>
-                        </ul>
-                    </div>
+                            {/* Policy Justification */}
+                            <div className="mt-6 p-4 bg-purple-900/20 border border-purple-500/30 rounded-lg">
+                                <h4 className="font-semibold text-purple-400 mb-2">🔒 Policy Justification</h4>
+                                <ul className="text-sm text-gray-300 space-y-1">
+                                    <li>• <strong>Technicians</strong>: Create/modify drafts, no access to finalization (separation of duties)</li>
+                                    <li>• <strong>Directors</strong>: Full oversight, approve reports with digital signatures (accountability)</li>
+                                    <li>• <strong>Police/DA</strong>: Read-only access to finalized reports (chain of custody, no tampering)</li>
+                                    <li>• <strong>Audit Logs</strong>: Director-only for security oversight and compliance</li>
+                                </ul>
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 {/* Security Components Summary */}

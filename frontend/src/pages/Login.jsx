@@ -65,9 +65,16 @@ export default function Login() {
             navigate('/dashboard');
             window.location.reload(); // Refresh to update auth state
         } catch (error) {
-            // Show error but keep modal open for retry
-            toast.error(error.response?.data?.message || 'Invalid OTP. Please try again.');
-            setOtp(''); // Clear OTP input for retry
+            // Show error message
+            toast.error('❌ Wrong OTP entered. Please try again.');
+
+            // Close modal and reset form after brief delay to show message
+            setTimeout(() => {
+                setShowOTPModal(false);
+                setOtp('');
+                setTempToken('');
+                setFormData({ username: '', password: '' });
+            }, 1500); // 1.5 second delay to show error message
         } finally {
             setLoading(false);
         }
