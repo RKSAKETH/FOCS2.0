@@ -52,9 +52,23 @@ class EmailService {
    * @param {string} purpose - Purpose of OTP (login, register, or finalize)
    */
   async sendOTP(email, otp, fullName, purpose = 'verification') {
+    // DEVELOPMENT MODE: Bypass email sending if EMAIL_BYPASS_MODE is set
+    if (process.env.EMAIL_BYPASS_MODE === 'true') {
+      console.log('\n╔════════════════════════════════════════════════════╗');
+      console.log('║  📧 EMAIL BYPASS MODE - OTP NOT SENT VIA EMAIL    ║');
+      console.log('╚════════════════════════════════════════════════════╝');
+      console.log(`\n🎯 OTP for ${purpose}:`);
+      console.log(`   Email: ${email}`);
+      console.log(`   Name: ${fullName}`);
+      console.log(`   OTP CODE: ${otp}`);
+      console.log(`   Valid for: 5 minutes\n`);
+      console.log('💡 Use this OTP in your frontend to test!\n');
+      return true; // Pretend email was sent successfully
+    }
+
     // Check if email is configured
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      throw new Error('Email service not configured. Please configure EMAIL_USER and EMAIL_PASS in .env file');
+      throw new Error('Email service not configured. Please configure EMAIL_USER and EMAIL_PASS in .env file OR set EMAIL_BYPASS_MODE=true for development');
     }
 
     const purposes = {
