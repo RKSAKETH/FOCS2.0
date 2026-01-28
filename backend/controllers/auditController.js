@@ -26,6 +26,9 @@ exports.getAuditLogs = async (req, res) => {
         // Filter by user
         if (userId) query.userId = userId;
 
+        // Exclude logs with null/unknown userId
+        query.userId = { $ne: null };
+
         const logs = await AuditLog.find(query)
             .populate('userId', 'username fullName role')
             .sort({ timestamp: -1 })

@@ -164,6 +164,7 @@ exports.login = async (req, res) => {
 exports.requestOTP = async (req, res) => {
     try {
         const userId = req.userId;
+        const purpose = req.query.purpose || req.body.purpose || 'verification'; // login, register, or finalize
         const user = await User.findById(userId);
 
         if (!user) {
@@ -181,8 +182,8 @@ exports.requestOTP = async (req, res) => {
         user.otp = { code: otp, expiresAt };
         await user.save();
 
-        // Send OTP via email
-        await emailService.sendOTP(user.email, otp, user.fullName);
+        // Send OTP via email with purpose
+        await emailService.sendOTP(user.email, otp, user.fullName, purpose);
 
         res.json({
             success: true,
