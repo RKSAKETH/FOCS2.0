@@ -1,0 +1,144 @@
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║            🚨 OTP EMAIL ERROR - QUICK FIX GUIDE 🚨            ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+
+┌────────────────────────────────────────────────────────────────┐
+│                        THE PROBLEM                             │
+└────────────────────────────────────────────────────────────────┘
+
+❌ Error: 500 - Failed to send OTP
+❌ Cause: Email environment variables not configured on Render
+✅ Solution: Add environment variables to Render dashboard
+
+WHY THIS HAPPENS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Localhost: .env file is loaded automatically → works fine
+❌ Render: .env file is NOT deployed (.gitignore) → variables missing
+
+┌────────────────────────────────────────────────────────────────┐
+│                    QUICK FIX (5 STEPS)                         │
+└────────────────────────────────────────────────────────────────┘
+
+1️⃣  Go to: https://dashboard.render.com/
+
+2️⃣  Select: focs2-0 (your backend service)
+
+3️⃣  Click: "Environment" tab in left sidebar
+
+4️⃣  Add these 9 environment variables:
+    ┌──────────────────┬─────────────────────────────────────────┐
+    │ EMAIL_HOST       │ smtp.gmail.com                          │
+    │ EMAIL_PORT       │ 465                                     │
+    │ EMAIL_USER       │ forensic.lab.portal@gmail.com           │
+    │ EMAIL_PASS       │ ebuu zmvc ydnd egrd                     │
+    │ JWT_SECRET       │ focs_toxicology_jwt_secret_2026_...    │
+    │ MASTER_SECRET    │ focs_aes_master_encryption_secret...   │
+    │ MONGODB_URI      │ mongodb+srv://saketh:saketh@...         │
+    │ NODE_ENV         │ production                              │
+    │ FRONTEND_URL     │ https://focs-2-0-fv44b3rj5-...         │
+    └──────────────────┴─────────────────────────────────────────┘
+
+5️⃣  Save Changes → Render auto-redeploys (~2 minutes)
+
+┌────────────────────────────────────────────────────────────────┐
+│                   FULL VALUES TO COPY                          │
+└────────────────────────────────────────────────────────────────┘
+
+EMAIL_HOST=smtp.gmail.com
+
+EMAIL_PORT=465
+
+EMAIL_USER=forensic.lab.portal@gmail.com
+
+EMAIL_PASS=ebuu zmvc ydnd egrd
+
+JWT_SECRET=focs_toxicology_jwt_secret_2026_secure_key
+
+MASTER_SECRET=focs_aes_master_encryption_secret_2026_very_secure
+
+MONGODB_URI=mongodb+srv://saketh:saketh@focscluster.ucesz7x.mongodb.net/?appName=FOCSCluster
+
+NODE_ENV=production
+
+FRONTEND_URL=https://focs-2-0-fv44b3rj5-rksakeths-projects.vercel.app
+
+┌────────────────────────────────────────────────────────────────┐
+│                         AFTER FIX                              │
+└────────────────────────────────────────────────────────────────┘
+
+Wait 1-2 minutes for Render to redeploy, then test:
+
+✅ Register new user → OTP email sent
+✅ Check email inbox → OTP received
+✅ Enter OTP → Verification success
+✅ Login → Works!
+✅ Create report → Works!
+
+┌────────────────────────────────────────────────────────────────┐
+│                      VERIFICATION                              │
+└────────────────────────────────────────────────────────────────┘
+
+After deployment, check:
+
+1. Frontend: https://focs-2-0-fv44b3rj5-rksakeths-projects.vercel.app
+   - Try registration
+   - Should not get 500 error
+
+2. Email:
+   - Check inbox for OTP email
+   - Check spam folder if not in inbox
+
+3. Browser Console (F12):
+   - Should not see "Failed to send OTP"
+   - Network tab should show 200 response, not 500
+
+4. Render Logs:
+   - Dashboard → focs2-0 → Logs
+   - Should see: "✅ OTP sent to [email] for register"
+
+┌────────────────────────────────────────────────────────────────┐
+│                    TROUBLESHOOTING                             │
+└────────────────────────────────────────────────────────────────┘
+
+Still getting errors?
+
+1. Double-check all 9 variables are added correctly
+2. Make sure EMAIL_PASS has spaces: "ebuu zmvc ydnd egrd"
+3. Check Render logs for specific error messages
+4. Verify Gmail account is working
+5. Wait full 2 minutes for deployment to complete
+
+┌────────────────────────────────────────────────────────────────┐
+│                    IMPORTANT NOTES                             │
+└────────────────────────────────────────────────────────────────┘
+
+🔒 SECURITY:
+   - EMAIL_PASS is a Gmail App Password (not regular password)
+   - Keep these values secure
+   - Don't share publicly
+
+⚠️  PRODUCTION:
+   - Current setup uses Gmail SMTP
+   - For production, consider: SendGrid, AWS SES, Mailgun
+   - More reliable than Gmail for high volume
+
+📧 EMAIL DELIVERY:
+   - First OTP might take 30-60 seconds
+   - Check spam folder
+   - Subsequent emails are faster
+
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║              ⏱️  ESTIMATED FIX TIME: 10 MINUTES               ║
+║                                                                ║
+║     5 min to add variables + 2 min redeploy + 3 min test      ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+
+📚 DETAILED GUIDE: See EMAIL_SETUP_RENDER.md
+
+🔗 QUICK LINK: https://dashboard.render.com/
+
+✨ Status: Ready to fix!

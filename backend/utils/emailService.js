@@ -13,7 +13,7 @@ class EmailService {
     const port = parseInt(process.env.EMAIL_PORT) || 587;
     const isSecure = port === 465; // true for port 465, false for 587
 
-    return nodemailer.createTransport({
+    return nodemailer.createTransporter({
       host: process.env.EMAIL_HOST || 'smtp.gmail.com',
       port: port,
       secure: isSecure, // true for 465, false for other ports
@@ -23,11 +23,14 @@ class EmailService {
       },
       tls: {
         rejectUnauthorized: false, // Accept self-signed certificates
-        minVersion: 'TLSv1.2'
+        minVersion: 'TLSv1.2',
+        ciphers: 'SSLv3' // More compatible with Gmail
       },
-      connectionTimeout: 15000, // 15 seconds
-      greetingTimeout: 15000,
-      socketTimeout: 15000,
+      connectionTimeout: 30000, // 30 seconds (increased for cloud platforms)
+      greetingTimeout: 30000,
+      socketTimeout: 30000,
+      pool: true, // Use pooled connections
+      maxConnections: 5,
       logger: false, // Disable logging
       debug: false // Disable debug output
     });
@@ -137,18 +140,31 @@ class EmailService {
       // Create fresh transporter for each email
       const transporter = this.createTransporter();
 
-      // Send email with timeout handling
+      // Verify connection first (with timeout)
+      console.log('📧 Connecting to email server...');
+      await Promise.race([
+        transporter.verify(),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Email connection timeout')), 10000)
+        )
+      ]);
+      console.log('✅ Email server connected');
+
+      // Send email with increased timeout
+      console.log(`📤 Sending OTP to ${email}...`);
       await Promise.race([
         transporter.sendMail(mailOptions),
         new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Email send timeout')), 15000)
+          setTimeout(() => reject(new Error('Email send timeout - Gmail may be slow')), 30000)
         )
       ]);
 
-      console.log(`✅ OTP sent to ${email} for ${purpose}`);
+      console.log(`✅ OTP sent successfully to ${email} for ${purpose}`);
       return true;
     } catch (error) {
       console.error('❌ Email sending failed:', error.message);
+      console.error('   EMAIL_USER:', process.env.EMAIL_USER ? 'Set' : 'NOT SET');
+      console.error('   EMAIL_PASS:', process.env.EMAIL_PASS ? 'Set' : 'NOT SET');
       throw new Error(`Failed to send OTP email: ${error.message}`);
     }
   }

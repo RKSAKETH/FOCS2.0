@@ -19,7 +19,8 @@ connectDB();
 const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:5173', // Vite default port
-    'https://focs-2-0-fv44b3rj5-rksakeths-projects.vercel.app', // Vercel deployment
+    'https://focs-2-0-fv44b3rj5-rksakeths-projects.vercel.app', // Vercel deployment (old)
+    'https://focs-2-0-evlt0fol0-rksakeths-projects.vercel.app', // Vercel deployment (new)
     process.env.FRONTEND_URL // Additional from env variable
 ].filter(Boolean); // Remove undefined values
 
@@ -28,10 +29,17 @@ app.use(cors({
         // Allow requests with no origin (like mobile apps, curl, Postman)
         if (!origin) return callback(null, true);
 
+        // Check exact match in allowed origins
         if (allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
-        } else {
-            console.log(`CORS blocked request from origin: ${origin}`);
+        }
+        // Allow all Vercel preview deployments (matches *.vercel.app)
+        else if (origin && origin.includes('vercel.app')) {
+            console.log(`✅ Allowing Vercel deployment: ${origin}`);
+            callback(null, true);
+        }
+        else {
+            console.log(`❌ CORS blocked request from origin: ${origin}`);
             callback(new Error('Not allowed by CORS'));
         }
     },
