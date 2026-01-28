@@ -1,0 +1,16 @@
+{
+  "build": {
+    "command": "npm run build",
+    "publish": "dist",
+    "environment": {
+      "VITE_API_URL": "https://focs2-0.onrender.com/api"
+    }
+  },
+  "redirects": [
+    {
+      "source": "/*",
+      "destination": "/index.html",
+      "statusCode": 200
+    }
+  ]
+}

@@ -3,8 +3,13 @@ dist/
 build/
 .env
 .env.local
+.env.development.local
+.env.test.local
+.env.production.local
+# Keep .env.production for deployment reference
 .DS_Store
 *.log
 coverage/
 .vscode/
 .idea/
+
