@@ -123,6 +123,15 @@ export default function Login() {
                             </div>
                         </div>
 
+                        <div className="text-right">
+                            <Link
+                                to="/forgot-password"
+                                className="text-sm text-purple-400 hover:text-purple-300 transition-colors"
+                            >
+                                Forgot Password?
+                            </Link>
+                        </div>
+
                         <button type="submit" className="w-full btn-primary" disabled={loading}>
                             {loading ? 'Logging in...' : 'Login with MFA'}
                         </button>

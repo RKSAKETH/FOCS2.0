@@ -69,14 +69,22 @@ class EmailService {
         subject: '🔒 Report Approval - Toxicology Portal',
         title: 'Report Finalization',
         message: 'You have initiated the Report Finalization process. To complete the digital signature and approve this forensic report, please use the following One-Time Password (OTP):'
+      },
+      password_reset: {
+        subject: '🔑 Password Reset Request - Toxicology Portal',
+        title: 'Password Reset',
+        message: 'You have requested to reset your password. To proceed, please use the following One-Time Password (OTP):'
       }
     };
 
     // Default to 'finalize' if purpose not recognized
     const config = purposes[purpose] || purposes.finalize;
 
+    // Set OTP validity based on purpose
+    const otpValidity = purpose === 'password_reset' ? '10 minutes' : '5 minutes';
+
     const mailOptions = {
-      from: `"Toxicology Portal" <${process.env.EMAIL_USER}>`,
+      from: `\"Toxicology Portal\" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: config.subject,
       html: `
@@ -107,7 +115,7 @@ class EmailService {
               
               <div class="otp-box">
                 <div class="otp-code">${otp}</div>
-                <p style="margin: 10px 0 0 0; color: #666;">Valid for 5 minutes</p>
+                <p style="margin: 10px 0 0 0; color: #666;">Valid for ${otpValidity}</p>
               </div>
               
               <div class="warning">
@@ -115,7 +123,7 @@ class EmailService {
                 <ul style="margin: 10px 0;">
                   <li>This OTP is for ${purpose} verification</li>
                   <li>Never share this code with anyone</li>
-                  <li>It will expire in 5 minutes</li>
+                  <li>It will expire in ${otpValidity}</li>
                   <li>If you did not request this, contact IT immediately</li>
                 </ul>
               </div>

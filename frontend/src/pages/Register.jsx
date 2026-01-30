@@ -42,7 +42,17 @@ export default function Register() {
             toast.success('OTP sent to your email!');
             setShowOTPModal(true);
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Registration failed');
+            // Check if there are specific validation errors
+            const errorData = error.response?.data;
+            if (errorData?.errors && errorData.errors.length > 0) {
+                // Display all specific validation errors
+                errorData.errors.forEach(err => {
+                    toast.error(err);
+                });
+            } else {
+                // Display generic error message
+                toast.error(errorData?.message || 'Registration failed');
+            }
         } finally {
             setLoading(false);
         }
