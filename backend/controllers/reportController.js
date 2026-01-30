@@ -102,14 +102,14 @@ exports.getAllReports = async (req, res) => {
 
         let query = {};
 
-        // Police can only see finalized reports
-        if (userRole === 'police') {
-            query.status = 'finalized';
-        }
-
         // Add status filter if provided
         if (status) {
             query.status = status;
+        }
+
+        // Police can only see finalized reports (Override any requested status)
+        if (userRole === 'police') {
+            query.status = 'finalized';
         }
 
         const reports = await Report.find(query)
@@ -152,7 +152,9 @@ exports.getAllReports = async (req, res) => {
             return reportObj;
         });
 
-        // Log access
+        // Log access blocked to prevent spamming audit logs with list views
+        // Only specific report views (clicks) are logged now per user request
+        /*
         await AuditLog.create({
             action: 'read',
             resource: query.status === 'finalized' ? 'final_report' : 'draft_results',
@@ -161,6 +163,7 @@ exports.getAllReports = async (req, res) => {
             details: `Viewed ${reports.length} reports`,
             ipAddress: req.ip
         });
+        */
 
         res.json({
             success: true,
@@ -192,6 +195,14 @@ exports.getReportById = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 message: 'Report not found'
+            });
+        }
+
+        // Restrict Police to only view finalized reports
+        if (req.userRole === 'police' && report.status !== 'finalized') {
+            return res.status(403).json({
+                success: false,
+                message: 'Access denied: You can only view finalized reports'
             });
         }
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -15,9 +15,24 @@ export default function ReportDetails() {
     const [showOTPModal, setShowOTPModal] = useState(false);
     const [otp, setOtp] = useState('');
 
+    const effectRan = useRef(false);
+
     useEffect(() => {
-        fetchReport();
-        if (id) verifyReport();
+        if (!id || effectRan.current) return;
+
+        effectRan.current = true;
+        const loadData = async () => {
+            await fetchReport();
+            // Verify separately
+            try {
+                const response = await api.get(`/reports/${id}/verify`);
+                setVerification(response.data.verification);
+            } catch (error) {
+                console.error('Verification failed:', error);
+            }
+        };
+
+        loadData();
     }, [id]);
 
     const fetchReport = async () => {

@@ -5,6 +5,8 @@ import { FaFlask, FaFileAlt, FaUserShield, FaSignOutAlt, FaPlus } from 'react-ic
 import api from '../utils/api';
 import { toast } from 'react-toastify';
 
+import Navbar from '../components/Navbar';
+
 export default function Dashboard() {
     const { user, logout } = useAuth();
     const [stats, setStats] = useState({ draft: 0, finalized: 0, total: 0 });
@@ -50,32 +52,7 @@ export default function Dashboard() {
 
     return (
         <div className="min-h-screen">
-            {/* Navigation */}
-            <nav className="glass-light border-b border-white/10">
-                <div className="container mx-auto px-4 py-4">
-                    <div className="flex justify-between items-center">
-                        <div className="flex items-center space-x-2">
-                            <FaFlask className="text-2xl text-purple-400" />
-                            <span className="text-xl font-bold">Toxicology Portal</span>
-                        </div>
-
-                        <div className="flex items-center space-x-4">
-                            <Link to="/dashboard" className="hover:text-purple-400 transition">Dashboard</Link>
-                            <Link to="/reports" className="hover:text-purple-400 transition">Reports</Link>
-                            {(user.role !== 'police') && (
-                                <Link to="/reports/create" className="hover:text-purple-400 transition">Create Report</Link>
-                            )}
-                            {user.role === 'director' && (
-                                <Link to="/audit" className="hover:text-purple-400 transition">Audit Logs</Link>
-                            )}
-                            <button onClick={logout} className="flex items-center space-x-2 text-red-400 hover:text-red-300">
-                                <FaSignOutAlt />
-                                <span>Logout</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </nav>
+            <Navbar />
 
             {/* Main Content */}
             <div className="container mx-auto px-4 py-12">
@@ -101,12 +78,14 @@ export default function Dashboard() {
                             icon={<FaFileAlt />}
                             color="blue"
                         />
-                        <StatCard
-                            title="Draft Reports"
-                            value={stats.draft}
-                            icon={<FaFileAlt />}
-                            color="yellow"
-                        />
+                        {user.role !== 'police' && (
+                            <StatCard
+                                title="Draft Reports"
+                                value={stats.draft}
+                                icon={<FaFileAlt />}
+                                color="yellow"
+                            />
+                        )}
                         <StatCard
                             title="Finalized Reports"
                             value={stats.finalized}

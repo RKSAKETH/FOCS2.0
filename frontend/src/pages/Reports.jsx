@@ -5,6 +5,8 @@ import api from '../utils/api';
 import { toast } from 'react-toastify';
 import { FaFileAlt, FaCheckCircle, FaTrash, FaExclamationTriangle } from 'react-icons/fa';
 
+import Navbar from '../components/Navbar';
+
 export default function Reports() {
     const { user } = useAuth();
     const [reports, setReports] = useState([]);
@@ -59,6 +61,8 @@ export default function Reports() {
 
     return (
         <div className="min-h-screen">
+            <Navbar />
+
             <div className="container mx-auto px-4 py-12">
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-4xl font-bold">Toxicology Reports</h1>
@@ -71,20 +75,24 @@ export default function Reports() {
 
                 {/* Filter Tabs */}
                 <div className="flex space-x-4 mb-8">
+                    {user.role !== 'police' && (
+                        <>
+                            <button
+                                className={`px-4 py-2 rounded-lg ${filter === 'all' ? 'btn-primary' : 'btn-secondary'}`}
+                                onClick={() => setFilter('all')}
+                            >
+                                All Reports
+                            </button>
+                            <button
+                                className={`px-4 py-2 rounded-lg ${filter === 'draft' ? 'btn-primary' : 'btn-secondary'}`}
+                                onClick={() => setFilter('draft')}
+                            >
+                                Draft
+                            </button>
+                        </>
+                    )}
                     <button
-                        className={`px-4 py-2 rounded-lg ${filter === 'all' ? 'btn-primary' : 'btn-secondary'}`}
-                        onClick={() => setFilter('all')}
-                    >
-                        All Reports
-                    </button>
-                    <button
-                        className={`px-4 py-2 rounded-lg ${filter === 'draft' ? 'btn-primary' : 'btn-secondary'}`}
-                        onClick={() => setFilter('draft')}
-                    >
-                        Draft
-                    </button>
-                    <button
-                        className={`px-4 py-2 rounded-lg ${filter === 'finalized' ? 'btn-primary' : 'btn-secondary'}`}
+                        className={`px-4 py-2 rounded-lg ${filter === 'finalized' || user.role === 'police' ? 'btn-primary' : 'btn-secondary'}`}
                         onClick={() => setFilter('finalized')}
                     >
                         Finalized
